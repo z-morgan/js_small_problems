@@ -1,0 +1,105 @@
+/*
+You have a bank of switches before you, numbered from 1 to n. Every switch is connected to exactly one light that is initially off. You walk down the row of switches and toggle every one of them. You walk back to the beginning of the row and start another pass. On this second pass, you toggle switches 2, 4, 6, and so on. On the third pass, you go back to the beginning again, this time toggling switches 3, 6, 9, and so on. You continue to repeat this process until you have gone through n repetitions.
+
+Write a program that takes one argument—the total number of switches—and returns an array of the lights that are on after n repetitions.
+
+lightsOn(5);        // [1, 4]
+// Detailed result of each round for `5` lights
+// Round 1: all lights are on
+// Round 2: lights 2 and 4 are now off;     1, 3, and 5 are on
+// Round 3: lights 2, 3, and 4 are now off; 1 and 5 are on
+// Round 4: lights 2 and 3 are now off;     1, 4, and 5 are on
+// Round 5: lights 2, 3, and 5 are now off; 1 and 4 are on
+
+write a function which takes an integer `n`, representing the length of an array of 
+  binary values, and returns an array with the 1-based indices of the values which are 'on'
+  after n iterations, where each iteration `k` you toggle every kth light.
+
+input: integer 1 or greater aka `n`
+return: array of integers
+ - if all lights are off, return empty array
+
+other reqs:
+- lights are off to start with
+- perform n passes, where each pass is k
+  - k starts with 1, and increases by one per pass
+    - on each pass, start with the 0 + kth element,
+      toggle that element, then step by k and continue toggling
+- after n passes, return an array containing the 1-based indices of every element in the 'on' position
+
+
+
+Q's:
+- what is the minimum value of n? 1
+- maximum? large.. say > 100
+- can the input be an invalid value? (1.1, '1', true, etc.) - no
+- will there every be no input, or more than one input? - no
+
+D: array of booleans
+
+A:
+build an n-length array where each element is `false`
+  loop from 1 up to n inclusive, and for each
+    add `false` to an array
+  return that array
+
+set step value k to 0
+loop n times: (until step value === n)
+  increment step value by 1
+
+  while currentIndex < n,
+    set currentIndex to k - 1
+    toggle the element at currentIndex in the array
+    increment currentIndex by k
+
+iterate through the array, and for each value:
+  if the value is `true`
+    store the (index + 1) in an `on` array
+return the `on` array
+
+*/
+
+function buildLightsArr(length) {
+  let arr = [];
+  for (let count = 1; count <= length; count += 1) {
+    arr.push(false);
+  }
+  return arr;
+}
+
+function toggleLights(lights, n) {
+  for (let step = 1; step <= n; step += 1) {
+    for (let i = (step - 1); i < n; i += step) {
+      lights[i] = !lights[i];
+    }
+  }
+  return lights;
+}
+
+function onlyOnLights(lights) {
+  let on = [];
+  lights.forEach((status, index) => {
+    if (status) {
+      on.push(index + 1);
+    }
+  });
+  return on;
+}
+
+function lightsOn(switches) {
+  let lights = buildLightsArr(switches);
+  
+  lights = toggleLights(lights, switches);
+
+  return onlyOnLights(lights);
+}
+
+console.log(lightsOn(1));        // [1]
+
+console.log(lightsOn(5));        // [1, 4]
+
+console.log(lightsOn(100));      // [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
+
+
+// self-feedback:
+// use consistent naming in algo and code (k -> step)
